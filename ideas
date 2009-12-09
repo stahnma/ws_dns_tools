@@ -1,0 +1,12 @@
+* Connect to LDAP
+* Write out CNAME object
+* Create a class for CNAME
+* 
+
+
+class for generic DNS entry
+  - cname
+  - arecord
+  - ptr
+  - txt 
+  - mx
