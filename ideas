@@ -10,3 +10,37 @@ class for generic DNS entry
   - ptr
   - txt 
   - mx
+
+
+# Example cname 
+# git, websages, com, dns, websages.com
+dn: relativeDomainName=git,dc=websages,dc=com,ou=dns,dc=websages,dc=com
+objectClass: top                                                       
+objectClass: dNSZone                                                   
+relativeDomainName: git                                                
+dNSTTL: 86400                                                          
+zoneName: websages.com                                                 
+cNAMERecord: tyr.websages.com.  
+
+
+# Example Arecord
+# tyr, websages, com, DNS, websages.com
+dn: relativeDomainName=tyr,dc=websages,dc=com,ou=DNS,dc=websages,dc=com
+objectClass: top                                                       
+objectClass: dNSZone                                                   
+zoneName: websages.com                                                 
+dNSTTL: 86400                                                          
+aRecord: 74.207.233.45                                                 
+relativeDomainName: tyr 
+
+# Example txt Record
+# ca-email, websages, com, dns, websages.com
+dn: relativeDomainName=ca-email,dc=websages,dc=com,ou=dns,dc=websages,dc=com
+objectClass: top                                                            
+objectClass: dNSZone                                                        
+relativeDomainName: ca-email                                                
+tXTRecord: "sysadmin@websages.com"                                          
+dNSTTL: 86400                                                               
+zoneName: websages.com  
+
+
