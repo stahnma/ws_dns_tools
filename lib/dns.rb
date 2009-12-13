@@ -2,6 +2,8 @@
 
 
 class DNSEntry
+  require 'yaml'
+  require 'ldap'
 
   def initialize(rdn)
     @objectClass = [  'top', 'dNSZone' ] 
@@ -12,15 +14,25 @@ class DNSEntry
 
   def publish
     # write it to LDAP
-    require 'ldap'
-    conn = LDAP::SSLConn.new('freyr.websages.com', 636)
+    conn = LDAP::SSLConn.new('ldaps://freyr.websages.com:636')
     binddn = 'uid=stahnma,ou=people,dc=websages,dc=com'
-    bindpw = 'xxxxxx'
+    bindpw = 'xxxxxxx'
     bound = conn.bind(binddn, bindpw)
-    #bound.add(@dn, attrs)
+    bound.add(@dn, build_attrs)
   end
 
   def build_attrs
+    attrs = { }
+    self.instance_variables.each do |iv|
+      next if iv =~ /@dn/
+      label = iv.sub('@', '')
+      if self.instance_variable_get(iv).kind_of?(Array)
+        attrs[label] =  self.instance_variable_get(iv)
+      else
+        attrs[label] =  [ self.instance_variable_get(iv) ] 
+      end
+    end
+    attrs
   end
  
   def to_ldif
@@ -51,5 +63,6 @@ class CName < DNSEntry
 end
 
 
-a = CName.new('git', 'tyr.websages.com.')
-puts a.to_ldif
+a = CName.new('wiki2', 'tyr.websages.com.')
+puts a.publish()
+#p a.build_attrs()
