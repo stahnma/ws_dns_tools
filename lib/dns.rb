@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 class DNSEntry
   require 'yaml'
   require 'ldap'
@@ -14,10 +13,12 @@ class DNSEntry
 
   def publish
     # write it to LDAP
-    conn = LDAP::SSLConn.new('ldaps://freyr.websages.com:636')
+    conn = LDAP::SSLConn.new('freyr.websages.com', 636)
     binddn = 'uid=stahnma,ou=people,dc=websages,dc=com'
-    bindpw = 'xxxxxxx'
+    bindpw = ENV['LDAP_PASSWORD']
     bound = conn.bind(binddn, bindpw)
+    p @dn
+    p build_attrs
     bound.add(@dn, build_attrs)
   end
 
@@ -29,10 +30,10 @@ class DNSEntry
       if self.instance_variable_get(iv).kind_of?(Array)
         attrs[label] =  self.instance_variable_get(iv)
       else
-        attrs[label] =  [ self.instance_variable_get(iv) ] 
+        attrs[label] =  [ self.instance_variable_get(iv).to_s ] 
       end
     end
-    attrs
+    return attrs
   end
  
   def to_ldif
@@ -63,6 +64,7 @@ class CName < DNSEntry
 end
 
 
-a = CName.new('wiki2', 'tyr.websages.com.')
-puts a.publish()
+a = CName.new('wiki3', 'tyr.websages.com.')
+puts a.to_ldif
+a.publish()
 #p a.build_attrs()
