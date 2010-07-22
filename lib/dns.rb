@@ -11,17 +11,29 @@ class DNSEntry
     @dn = ""
   end
 
-  def publish
-    # write it to LDAP
+  def connect
     conn = LDAP::SSLConn.new('freyr.websages.com', 636)
     binddn = 'uid=stahnma,ou=people,dc=websages,dc=com'
     bindpw = ENV['LDAP_PASSWORD']
-    bound = conn.bind(binddn, bindpw)
-    p @dn
-    p build_attrs
-    bound.add(@dn, build_attrs)
+    @bound = conn.bind(binddn, bindpw)
   end
 
+  def delete(dn)
+    connect
+    @bound.delete(dn)
+  end
+
+  def publish
+    connect 
+    @bound.add(@dn, build_attrs)
+  end
+
+  def exists?(dn)
+    connect
+    entries = @bound.search("dc=websages,dc=com", 0, dn)
+    p entries.class
+    p foo.to_hash
+  end
   def build_attrs
     attrs = { }
     self.instance_variables.each do |iv|
@@ -66,5 +78,7 @@ end
 
 a = CName.new('wiki3', 'tyr.websages.com.')
 puts a.to_ldif
-a.publish()
+#a.publish()
+#a.delete('relativeDomainName=wiki3,dc=websages,dc=com,ou=dns,dc=websages,dc=com')
+a.exists?('relativeDomainName=wiki3,dc=websages,dc=com,ou=dns,dc=websages,dc=com')
 #p a.build_attrs()
