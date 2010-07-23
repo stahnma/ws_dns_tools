@@ -30,7 +30,7 @@ class DNSEntry
 
   def exists?(dn)
     connect
-    entries = @bound.search("dc=websages,dc=com", 0, dn)
+    entries = @bound.search("dc=websages,dc=com", LDAP::LDAP_SCOPE_SUBTREE, dn)
     p entries.class
     p foo.to_hash
   end
